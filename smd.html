@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<head>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<link href='https://fonts.googleapis.com/css?family=Londrina+Shadow' rel='stylesheet' type='text/css'>
+<style>
+body {
+  font-family: helvetica, sans-serif;
+  margin: 0 auto;
+  max-width: 600px;
+  background: rgba(1, 1, 99);
+}
+div {
+  height: 400px;
+  background-size: 100% 100%;
+  position: relative;
+  margin: 40px 0 0 0;
+  border-radius: 12px;
+}
+h1 {
+  font-family: 'Londrina Shadow', cursive;
+  text-align: center;
+  font-size: 75px;
+  color: rgba(115, 10, 23);
+  margin: 60px 0 0 0;
+}
+h2 {
+  text-align: center;
+  color:rgba(2, 97, 40,1);
+  margin: 0px 0 70px 0;
+}
+input {
+	font-size: 22px;
+}
+
+p {
+  color: rgba(214, 74, 9);
+  background: black;
+  background: linear-gradient(bottom, rgba(0,0,0,1), rgba(0,0,0,.4));
+  background: -webkit-linear-gradient(bottom, rgba(0,0,0,1), rgba(0,0,0,.4));
+  background: -moz-linear-gradient(bottom, rgba(0,0,0,1), rgba(0,0,0,.4));
+  padding: 10px;
+  line-height: 28px;
+  text-align: justify;
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  height: 30px;
+  transition: height .5s;
+  -webkit-transition: height .5s;
+  -moz-transition: height .5s;
+}
+
+small {
+  opacity: 0;
+}
+
+.show-description p {
+  height: 150px;
+}
+
+.show-description small {
+  opacity: 1;
+}
+
+.first{
+  background-image: url("https://asset.kompas.com/crops/fHasIq62X5_m0rQghgMJp-7DkE4=/199x0:1174x650/750x500/data/photo/2020/12/21/5fe0894b4d25a.jpg");
+}
+.second{
+  background-image: url("https://images.ctfassets.net/hhv516v5f7sj/67FdHi77S9fQiLGtjdoZof/ea0c38c3d5e687d0276844d397014821/Impossible__Quesadilla_1098x1000.jpg");
+}
+.dessert{
+  background-image: url("https://bakeitwithlove.com/wp-content/uploads/2022/12/Fudge-Brownies-sq.jpg");
+}
+.price {
+  float: right;
+}
+@media (max-width: 500px) {
+  h1 {
+    font-size: 50px;
+    margin-top: 20px;
+    line-height: 40px;
+  }
+  h2 {
+    font-size: 20px;
+    margin: 20px 0 30px 0;
+  }
+  div {
+    margin: 20px 12px 0 12px;
+  }
+  p {
+    font-size: 20px;
+    line-height: 24px;
+  }
+  small {
+    font-size: 16px;
+  }
+}
+
+</style>
+
+</head>
+
+<body>
+<h1>Anderson Food shop</h1>
+<h2> Hispanic </h2>
+<div class="first">
+	 <input type="number" class="quantities" min="0" style="width: 50px">
+  <p>Taco <span class="price">$10</span><br />
+  <small>Nice taco  </small></p>
+</div>
+
+<div class="second">
+	 <input type="number" class="quantities" min="0" style="width: 50px">
+  <p> casadia  <span class="price">$15</span><br />
+  <small>Nice casadia </small></p>
+</div>
+  
+<div class="dessert">
+	 <input type="number" class="quantities" min="0" style="width: 50px">
+  <p> brownie <span class="price">$5</span><br />
+  <small>nice brownie..</small></p>
+</div>
+
+
+<br><br>
+		<input id="Name" placeholder="Your name">
+  <input type="Email" id="Email" placeholder="Your email">
+  <input id="submit" type="Submit">
+<br><br>
+
+
+
+
+<script>
+  $('div').on('click', function() {
+      $(this).toggleClass('show-description');
+  });
+</script>
+		
+		<script type="module">
+		  // Import the functions you need from the SDKs you need
+		  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-database.js";
+		  // TODO: Add SDKs for Firebase products that you want to use
+		  // https://firebase.google.com/docs/web/setup#available-libraries
+
+		  // Your web app's Firebase configuration
+		  const firebaseConfig = {
+		    apiKey: "AIzaSyBCOYrYPkOkMsccXoH3ZEVMK6Yfw-cI4vQ",
+		    authDomain: "html-project-68a57.firebaseapp.com",
+		    databaseURL: "https://html-project-68a57-default-rtdb.firebaseio.com",
+		    projectId: "html-project-68a57",
+		    storageBucket: "html-project-68a57.appspot.com",
+		    messagingSenderId: "503129282048",
+		    appId: "1:503129282048:web:78f821476dfc880aba2ae5"
+		  };
+
+		  // Initialize Firebase
+		  const app = initializeApp(firebaseConfig);
+				const db = getDatabase(app);
+    const Name = document.querySelector("#Name") 
+    const Email = document.querySelector("#Email")
+    document.querySelector('#submit').addEventListener('click', Submit)
+    const quantities = document.querySelectorAll(".quantities") 
+				const prices = document.querySelectorAll(".price") 
+    const itemsList = ["taco", "casadia", "brownie"]
+				
+				
+				
+				
+				function Submit() {
+					  const timestamp = buildTimestamp()
+					let total = 0
+			  let cart = { }
+			  for  (let i=0; i<quantities.length; i=i+1) {
+					if (quantities[i].value != "0" && quantities[i].value != "") {	
+     let price = prices[i].innerHTML.replace('$', '')
+			  total = total + quantities[i].value * price 
+			 	cart[itemsList[i]] = parseInt(quantities[i].value) 
+			  	}
+			  	quantities[i].value = ""
+			  }
+					
+	  
+					  set(ref(db, timestamp), {
+						  Name: Name.value,
+					      email: Email.value,
+								   cart: cart,
+      totalPrice: total,
+		     paid: "not yet",
+					  });
+
+					  Name.value = ""
+					  Email.value = ""
+					}
+				
+					function buildTimestamp() {
+						  const now = new Date();
+						  let timestamp = now.getFullYear().toString() + "/";
+						  //const month = now.toLocaleString('default', { month: 'long' });
+
+						  let month = now.getMonth()+1   //add 1 because Javascript uses 0 for January
+						  month = month.toString()
+						  month = addLeadingZero(month)
+						  timestamp += month + "/"; 
+
+						  let date = now.getDate().toString()
+						  date = addLeadingZero(date)
+						  timestamp += date + "/";
+
+						  let hours = now.getHours().toString()
+						  hours = addLeadingZero(hours)
+						  timestamp += hours + ":";
+
+						  let minutes = now.getMinutes().toString()
+						  minutes = addLeadingZero(minutes)
+						  timestamp += minutes + ":";
+
+						  let seconds = now.getSeconds().toString()
+						  seconds = addLeadingZero(seconds)
+						  timestamp += seconds;
+  
+						  return timestamp
+						}
+	
+						function addLeadingZero(units) {
+							if (units.length < 2) {
+								units = "0" + units
+							}
+							return units
+						}
+
+
+
+		</script>
+
+</body>
